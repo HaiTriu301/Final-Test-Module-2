@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-    private static final String PATH = "contacts.csv";
+    private static final String PATH = "src/data/contacts.csv";
 
-    private static void writeToFile(List<Contact> contacts) {
+    public static void writeToFile(List<Contact> contacts) {
         File dir = new File("data");
         if (!dir.exists()) {
             dir.mkdirs();
@@ -29,35 +29,34 @@ public class FileUtils {
         }
     }
 
-    public static List<Contact> readFromFile(){
-        List<Contact> contacts = new ArrayList<Contact>();
+    public static List<Contact> readFromFile() {
+        List<Contact> contacts = new ArrayList<>();
         File file = new File(PATH);
 
-        if (!file.exists()){
-            System.out.println("File không tồn tại");
+        if (!file.exists()) {
+            System.out.println("⚠️ File chưa tồn tại: " + PATH);
             return contacts;
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
-            while((line = br.readLine()) != null){
-                if (line.trim().isEmpty() || line.startsWith("phone")){
-                    continue;
-                }
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty() || line.startsWith("phone")) continue;
 
                 String[] data = line.split(",");
-                if (data.length != 7){
-                    System.out.println("Dữ liệu định sai sai dòng thứ " + line);
+                if (data.length != 7) {
+                    System.out.println("Dòng dữ liệu sai định dạng: " + line);
                     continue;
                 }
 
-                Contact contact = new Contact(
-                        data[0], data[1], data[2], data[3],
-                        data[4], data[5], data[6]
+                Contact c = new Contact(
+                        data[0], data[1], data[2],
+                        data[3], data[4], data[5], data[6]
                 );
+                contacts.add(c);
             }
-        } catch (IOException e){
-            System.out.println("Lỗi khi đọc file." + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Lỗi khi đọc file: " + e.getMessage());
         }
 
         return contacts;
