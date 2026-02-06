@@ -102,7 +102,7 @@ public class ContactController {
 
         System.out.print("Xác nhận xóa (Y/N): ");
         if (sc.nextLine().equalsIgnoreCase("Y")) {
-//            service.remove(c);
+            service.delete(c);
             System.out.println("Đã xóa");
         }
     }

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-    private static final String PATH = "src/data/contacts.csv";
+    private static final String PATH = "data/contacts.csv";
 
     public static void writeToFile(List<Contact> contacts) {
         File dir = new File("data");
@@ -23,7 +23,7 @@ public class FileUtils {
                 bw.write(contact.toCSV());
                 bw.newLine();
             }
-            System.out.println("Lưu file thành cng");
+            System.out.println("Lưu file thành công");
         } catch (IOException e){
             System.out.println("Lỗi ghi file" + e.getMessage());
         }
@@ -34,14 +34,21 @@ public class FileUtils {
         File file = new File(PATH);
 
         if (!file.exists()) {
-            System.out.println("⚠️ File chưa tồn tại: " + PATH);
+            System.out.println("File chưa tồn tại: " + PATH);
             return contacts;
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
+            boolean isFirstLine = true;
+
             while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty() || line.startsWith("phone")) continue;
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue; // bỏ dòng header
+                }
+
+                if (line.trim().isEmpty()) continue;
 
                 String[] data = line.split(",");
                 if (data.length != 7) {
@@ -55,7 +62,8 @@ public class FileUtils {
                 );
                 contacts.add(c);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Lỗi khi đọc file: " + e.getMessage());
         }
 
