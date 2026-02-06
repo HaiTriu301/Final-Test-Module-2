@@ -1,5 +1,7 @@
 package controller;
 
+import exception.InvalidEmailException;
+import exception.InvalidPhoneException;
 import service.ContactService;
 import model.Contact;
 import utils.ValidationUtils;
@@ -28,39 +30,51 @@ public class ContactController {
     }
 
     public void addNew() {
-        try {
-            System.out.print("SĐT: ");
-            String phone = sc.nextLine();
-            if (!ValidationUtils.validatePhone(phone)) {
-                throw new Exception("Số điện thoại không hợp lệ");
+        String phone, group, name,gender,address,birthday,email;
+
+        while (true){
+            try{
+                System.out.print("SĐT: ");
+                phone = sc.nextLine();
+                if (!ValidationUtils.validatePhone(phone)) {
+                    throw new InvalidPhoneException("Số điện thoại không hợp lệ");
+                }
+                if (service.findByPhone(phone) != null) {
+                    throw new InvalidPhoneException("SĐT đã tồn tại");
+                }
+                break;
+            } catch (InvalidPhoneException e){
+                System.out.println("Error: " + e.getMessage());
             }
-            if (service.findByPhone(phone) != null) {
-                throw new Exception("SĐT đã tồn tại");
-            }
-
-            System.out.print("Nhóm: ");
-            String group = sc.nextLine();
-            System.out.print("Tên: ");
-            String name = sc.nextLine();
-            System.out.print("Giới tính: ");
-            String gender = sc.nextLine();
-            System.out.print("Địa chỉ: ");
-            String address = sc.nextLine();
-            System.out.print("Ngày sinh: ");
-            String birthday = sc.nextLine();
-            System.out.print("Email: ");
-            String email = sc.nextLine();
-
-            if (!ValidationUtils.validateEmail(email)) {
-                throw new Exception("Email không hợp lệ");
-            }
-
-            service.add(new Contact(phone, group, name, gender, address, birthday, email));
-            System.out.println("Thêm thành công");
-
-        } catch (Exception e) {
-            System.out.println("Error " + e.getMessage());
         }
+
+        System.out.print("Nhóm: ");
+        group = sc.nextLine();
+        System.out.print("Tên: ");
+        name = sc.nextLine();
+        System.out.print("Giới tính: ");
+        gender = sc.nextLine();
+        System.out.print("Địa chỉ: ");
+        address = sc.nextLine();
+        System.out.print("Ngày sinh: ");
+        birthday = sc.nextLine();
+
+        while (true) {
+            try {
+                System.out.print("Email: ");
+                email = sc.nextLine();
+
+                if (!ValidationUtils.validateEmail(email)) {
+                    throw new InvalidEmailException("Email không hợp lệ");
+                }
+                break;
+            } catch (InvalidEmailException e) {
+                System.out.println("Error " + e.getMessage());
+            }
+        }
+
+        service.add(new Contact(phone, group, name, gender, address, birthday, email));
+        System.out.println("Thêm thành công");
     }
 
     public void update() {
